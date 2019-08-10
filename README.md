@@ -7,6 +7,8 @@ This tutorial guides the steps to take a baseline installation of a Linux server
 
 In this tutorial, a digitalocean droplet has been used.
 
+**See Demo:** [https://www.statixdesign.com/](https://www.statixdesign.com/)
+
 ### Technical Details
 - Server IP Address: 68.183.11.197
 - SSH server access port: 2200
