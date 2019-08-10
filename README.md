@@ -13,6 +13,8 @@ In this tutorial, a digitalocean droplet has been used.
 - SSH login username: grader
 - Application URL: https://statixdesign.com
 - User Grader password: password
+- Python Version: 3.7.3
+- Pip3 Version: 18.1
 
 
 ## Setup the Server
@@ -174,3 +176,74 @@ You will be asked to specify a password and details for new user. You can simply
 	  Other []:
   Is the information correct? [Y/n]
   ```
+  
+  2. Run the following command to add the user grader to the sudo group to grant it administrative access:
+  ```
+  usermod -aG sudo grader
+  ```
+
+### 9. Add SSH Access to the user grader
+In order to allow SSH access to the user grader, log into the account of the user grader from your virtual server:
+
+```sudo su - grader```
+Then create **authorized_keys** file:
+```
+mkdir .ssh
+chmod 700 .ssh
+cd .ssh/
+touch authorized_keys
+chmod 644 authorized_keys
+```
+
+Then enter the following commands to allow SSH access to the user grader:
+```
+sudo nano authorized_keys
+```
+
+Inside nano, paste the contents of the public key file ```~/.ssh/udacity.pub``` and save. After save run ```exit```.
+
+After running exit command, you will be returned to your local machine. Now you should be able to login as **grader** user with running following command in your local machine.
+```
+ssh grader@68.183.11.197 -p 2200
+```
+
+Please note that, you should change the given IP address with your droplet's IP address.
+
+
+### 10. Disable Root Login
+1. Login as root in your server with following command:
+```
+ssh root@68.183.11.197 -p 2200
+```
+2. Open the file ```/etc/ssh/sshd_config```:
+``` 
+# nano /etc/ssh/sshd_config
+```
+3. Change the line ```PermitRootLogin yes```, with ```PermitRootLogin no```.
+4. Restart the SSH server:
+```
+sudo service ssh restart
+```
+5. Terminate the connection:
+```
+exit
+```
+
+After ```exit``` command, you will be returned to your local machine. Run:
+```
+ssh root@68.183.11.197 -p 2200
+```
+If you see a **Permission denied (publickey)** message, then this step is succesfully completed.
+
+### 11. Install Apache Server
+1. Login as grader with following command:
+```
+ssh grader@68.183.11.197 -p 2200
+```
+
+2. Install Apache:
+```
+sudo apt update
+sudo apt install apache2
+```
+
