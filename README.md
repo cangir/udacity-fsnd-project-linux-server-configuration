@@ -57,7 +57,7 @@ The key pair is stored inside the ```~/.ssh/``` directory.
 ### 2. Setup DigitalOcean Droplet
 1. Create an account on DigitalOCean or log in if you already have one.
 2. Go to dashboard and click **Create Droplet**
-3. Choose an image form the given list. I recommend choosing **Ubuntu 18.04 x64** as I will use it in this guide.
+3. Choose an image form the given list. I recommend choosing **Ubuntu 19.04 x64** as I will use it in this guide.
 4. Choose your preffered size of droplet. My choice is **1GB/1 vCPU/2GB** configuration. This is the littlest choice but it can be extended.
 5. Open **Add Your SSH Keys** section and paste the content of your public key, ```udacity.pub```, which you created in section 1. By the way, ```~/.ssh/authorized_keys```file will be automatically created with necessary permissions. Also ```PasswordAuthentication no``` rule will be add in the ```/etc/ssh/sshd_config``` file,  which disables password authentication on the **root** user and enforces SSH logins only.
 6. Finally click **Create** to create the droplet and make yourself a coffee. It will take a few minutes. Once the droplet successfully created, a public address  will be assigned. 
@@ -247,3 +247,164 @@ sudo apt update
 sudo apt install apache2
 ```
 
+3. Enter the URL http://68.183.11.197 in your web browser. If you see **Apache 2 Ubuntu Default Page** and **It Works**, then your installation in successfull.
+
+### 12. Inbstall Pip3
+1. Run to install Pip3:
+```
+sudo apt install python3-pip
+```
+
+2. Check if it is installed with follwing command:
+```pip3 --version```
+
+If you see installed Pip version then your installation in successfull.
+
+### 13. Install and Configure PostgreSQL
+1. Enable PostgreSQL Apt Repository
+
+Start with the import of the GPG key for PostgreSQL packages.
+```
+sudo apt-get install wget ca-certificates
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+```
+
+Now add the repository to your system.
+```
+sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" >> /etc/apt/sources.list.d/pgdg.list'
+```
+
+2. Install PostgreSQL on Ubuntu
+Now as we have added PostgreSQL official repository in our system, First we need to update the repository list. After that install Latest PostgreSQL Server in our Ubuntu system using following commands.
+```
+sudo apt-get update
+sudo apt-get install postgresql postgresql-contrib
+```
+
+3. Connect to PostgreSQL
+After installing the PostgreSQL database server, by default, it creates a user ‘postgres’ with role ‘postgres’. Also creates a system account with the same name ‘postgres’. So to connect to Postgres server, log in to your system as user postgres and connect database.
+```
+sudo su - postgres
+psql
+```
+
+4. Create database and user:
+```
+CREATE DATABASE catalog;
+CREATE USER catalog;
+ALTER ROLE catalog WITH PASSWORD 'password';
+postgres=# GRANT ALL PRIVILEGES ON DATABASE catalog TO catalog;
+```
+
+5. To disconnect from PostgreSQL database command prompt just type below command and press enter. It will return you back to the Ubuntu command prompt.
+```
+\q
+```
+
+
+
+### 14. Setting Up Apache to Run the Flask Application
+1. Install mod_wsgi
+```
+sudo apt install libapache2-mod-wsgi-py3
+```
+After installation, restart Apache server:
+```
+sudo service apache2 restart
+```
+ 
+2. Change the current working directory to ```/var/www/```:
+```
+cd /var/www
+```
+
+3. Clone your GitHub repository of Item Catalog application:
+```
+sudo git clone https://github.com/cangir/theme-catalog.git FlaskApp
+```
+
+4. Change the current directory to cloned repository.
+```
+cd FlaskApp/
+```
+
+5. Install requirements
+```
+sudo pip3 install -r requirements.txt
+```
+
+6. In order to setup virtual host configuration, run following command:
+```
+sudo nano /etc/apache2/sites-available/FlaskApp.conf
+```
+
+And add the following lines:
+```
+<VirtualHost *:80>
+   ServerName www.yourdomain.tld
+   ServerAlias yourdomain.tld *.yourdomain.tld
+   ServerAdmin youremail@domain.tld
+   WSGIScriptAlias / /var/www/FlaskApp/flaskapp.wsgi
+
+   <Directory /var/www/FlaskApp/>
+       Require all granted
+   </Directory>
+   Alias /static /var/www/FlaskApp/app/static
+   <Directory /var/www/FlaskApp/app/static/>
+       Require all granted
+   </Directory>
+   ErrorLog ${APACHE_LOG_DIR}/error.log
+   LogLevel warn
+   CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+```
+
+**Note:** Change the ServerName and ServerAlias with your domain. If you do not have a domain just write your droplet's IP address for either area.
+
+7. Enable the virtual host.
+```
+sudo a2ensite FlaskApp
+```
+
+8. Restart Apache server:
+```
+sudo service apache2 restart
+```
+
+9. Create the wsgi file.
+Apache uses the .wsgi file to serve the Flask app. Move to the /var/www/FlaskApp/ directory and create a file named flaskapp.wsgi with following commands:
+```
+cd /var/www/FlaskApp/
+sudo nano flaskapp.wsgi
+```
+
+Add the following lines to the **flaskapp.wsgi** file:
+```
+import sys
+import logging
+logging.basicConfig(stream=sys.stderr)
+sys.path.insert(0, "/var/www/FlaskApp/")
+sys.path.append("/home/grader/.local/lib/python3.7/site-packages")
+
+from manage import app as application
+```
+
+In the above code, replace **manage** with the name of the main module of your application.
+
+10. Restart Apache server:
+```
+sudo service apache2 restart
+```
+
+11. Disable default Apache page:
+```
+sudo a2dissite 000-default.conf
+```
+
+10. Restart Apache server:
+```
+sudo service apache2 restart
+```
+
+Now you can probably see your running application with your borowser.
+Open: http://68.183.11.197 or http://yourdomain.tld
