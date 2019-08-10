@@ -414,3 +414,4 @@ Open: http://68.183.11.197 or http://yourdomain.tld
 1. [Initial Server Setup with Ubuntu 18.04](https://www.digitalocean.com/community/tutorials/initial-server-setup-with-ubuntu-18-04)
 2. [How To Deploy a Flask Application on an Ubuntu VPS](https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-application-on-an-ubuntu-vps)
 3. [How to Install PostgreSQL 11 on Ubuntu 18.04 & 16.04 LTS](https://tecadmin.net/install-postgresql-server-on-ubuntu/)
+4. [Udacity - Linux Server Configuration Project](https://github.com/SDey96/Udacity-Linux-Server-Configuration-Project)
