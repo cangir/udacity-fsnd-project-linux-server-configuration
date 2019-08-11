@@ -17,6 +17,7 @@ In this tutorial, a digitalocean droplet has been used.
 - User Grader password: password
 - Python Version: 3.7.3
 - Pip3 Version: 18.1
+- Droplet: Ubuntu 19.04 x64
 
 
 ## Setup the Server
